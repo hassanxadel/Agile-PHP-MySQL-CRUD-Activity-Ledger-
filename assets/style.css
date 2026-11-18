@@ -1,0 +1,286 @@
+/* Activity Ledger — a registrar-style catalog for instructor-led activities.
+   Design: folder-tab navigation over a flat ledger card, hairline rules
+   instead of shadows, Lora for headings, Public Sans for UI and data. */
+
+:root {
+  --paper: #edefee;
+  --card: #ffffff;
+  --ink: #1c2b3a;
+  --slate: #51606e;
+  --brass: #91742e;
+  --brass-strong: #7a5f22;
+  --forest: #3f6b52;
+  --brick: #8c3b2e;
+  --rule: #cbd2d6;
+  --rule-strong: #a9b2b7;
+  --radius: 3px;
+}
+
+:root[data-theme="dark"] {
+  --paper: #141b22;
+  --card: #1c2530;
+  --ink: #e7e9e4;
+  --slate: #9aa7ac;
+  --brass: #d3ad3c;
+  --brass-strong: #e9c45a;
+  --forest: #6fa98a;
+  --brick: #d1695a;
+  --rule: #324048;
+  --rule-strong: #425662;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141b22;
+    --card: #1c2530;
+    --ink: #e7e9e4;
+    --slate: #9aa7ac;
+    --brass: #d3ad3c;
+    --brass-strong: #e9c45a;
+    --forest: #6fa98a;
+    --brick: #d1695a;
+    --rule: #324048;
+    --rule-strong: #425662;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Public Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--brass); }
+
+.site-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 1.5rem;
+}
+
+.site-header h1 {
+  font-family: "Lora", Georgia, serif;
+  font-weight: 600;
+  font-size: 2rem;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.site-header p {
+  margin: 0;
+  color: var(--slate);
+  max-width: 46ch;
+}
+
+.theme-toggle {
+  flex-shrink: 0;
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.theme-toggle:hover { border-color: var(--brass); }
+
+.layout {
+  max-width: 1040px;
+  margin: 0 auto 4rem;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+.layout > * { min-width: 0; }
+
+/* Folder-tab navigation */
+.tabs {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs li { margin: 0; }
+
+.tabs a {
+  display: block;
+  text-decoration: none;
+  color: var(--slate);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding: 0.65rem 1rem;
+  margin-bottom: 4px;
+  margin-right: -1px;
+  font-size: 0.92rem;
+  position: relative;
+}
+
+.tabs a:hover { color: var(--ink); border-color: var(--rule-strong); }
+
+.tabs a.is-active {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--rule-strong);
+  border-right: 1px solid var(--card);
+  font-weight: 600;
+  z-index: 1;
+}
+
+.ledger {
+  background: var(--card);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0 var(--radius) var(--radius) var(--radius);
+  min-height: 420px;
+}
+
+.panel {
+  padding: 1.75rem 2rem;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 1rem;
+}
+
+.panel:last-child { border-bottom: none; }
+
+.panel h2 {
+  font-family: "Lora", Georgia, serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  margin: 0 0 0.35rem;
+}
+
+.panel .panel-hint {
+  color: var(--slate);
+  margin: 0 0 1.25rem;
+  max-width: 60ch;
+}
+
+/* Banner */
+.banner {
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid;
+  font-size: 0.92rem;
+}
+
+.banner.success { background: color-mix(in srgb, var(--forest) 12%, var(--card)); border-color: var(--forest); color: var(--forest); }
+.banner.error { background: color-mix(in srgb, var(--brick) 12%, var(--card)); border-color: var(--brick); color: var(--brick); }
+
+/* Forms */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+
+.form-grid .field.full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.field label { font-size: 0.85rem; font-weight: 500; color: var(--slate); }
+
+.field input,
+.field textarea {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: 2px solid var(--brass);
+  outline-offset: 1px;
+}
+
+.field textarea { resize: vertical; min-height: 5rem; }
+
+.actions { margin-top: 1.25rem; }
+
+button.btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: #fff;
+  background: var(--brass);
+}
+
+button.btn:hover { background: var(--brass-strong); }
+
+button.btn.danger { background: var(--brick); }
+button.btn.danger:hover { background: #a1493a; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+
+table.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+table.ledger-table th,
+table.ledger-table td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+table.ledger-table th {
+  color: var(--slate);
+  font-weight: 500;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.empty-state {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--slate);
+}
+
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    margin: 1.5rem 0 0;
+  }
+  .tabs a {
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-right: 1px solid var(--rule);
+    border-bottom: none;
+    margin-right: 4px;
+    margin-bottom: -1px;
+    white-space: nowrap;
+  }
+  .tabs a.is-active { border-bottom: 1px solid var(--card); }
+  .ledger { border-radius: 0 var(--radius) var(--radius) var(--radius); }
+  .form-grid { grid-template-columns: 1fr; }
+  .panel { padding: 1.5rem; }
+}

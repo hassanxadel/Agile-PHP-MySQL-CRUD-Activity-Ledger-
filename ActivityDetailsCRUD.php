@@ -22,12 +22,15 @@ class ActivityDetailsCRUD {
     private $conn;
 
     public function __construct() {
-        $servername = "localhost";
+        mysqli_report(MYSQLI_REPORT_OFF);
+
+        $servername = "127.0.0.1";
         $username = "root";
         $password = "";
-        $database = "agileproject";
+        $database = "activity_details_app";
+        $port = 3307;
 
-        $this->conn = new mysqli($servername, $username, $password, $database);
+        $this->conn = new mysqli($servername, $username, $password, $database, $port);
 
         if ($this->conn->connect_error) {
             die("Connection failed: " . $this->conn->connect_error);
@@ -63,41 +66,38 @@ class ActivityDetailsCRUD {
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("iisssss", $activity->Id, $activity->user_id, $activity->start_date, $activity->end_date, $activity->Activity_Name, $activity->attachment, $activity->Major);
-    
+
         if ($stmt->execute()) {
             return "New record created successfully";
         } else {
             return "Error creating record: " . $stmt->error;
         }
     }
-    
-    
+
     public function feedback(Feedback $feedback) {
-        $sql = "INSERT INTO feedback (Id, FullName, email, Instructor_id, Message)
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO feedback (FullName, email, Instructor_id, Message)
+                VALUES (?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("issis", $feedback->Id, $feedback->FullName, $feedback->email, $feedback->Instructor_id, $feedback->Message);
-    
+        $stmt->bind_param("ssis", $feedback->FullName, $feedback->email, $feedback->Instructor_id, $feedback->Message);
+
         if ($stmt->execute()) {
             return "New Feedback is saved";
         } else {
             return "Error saving feedback: " . $stmt->error;
         }
     }
-    
+
     public function update(Activity $activity) {
         $sql = "UPDATE activity_details SET user_id=?, start_date=?, end_date=?, Activity_Name=?, attachment=?, Major=? WHERE Id=?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("isssssi", $activity->user_id, $activity->start_date, $activity->end_date, $activity->Activity_Name, $activity->attachment, $activity->Major, $activity->Id);
-    
+
         if ($stmt->execute()) {
             return "Record updated successfully";
         } else {
             return "Error updating record: " . $stmt->error;
         }
     }
-    
-    
 
     public function readAllActivities() {
         $sql = "SELECT * FROM activity_details";
@@ -115,6 +115,7 @@ class ActivityDetailsCRUD {
     }
 
     public function delete($Id) {
+        $Id = (int) $Id;
         $stmt = $this->conn->prepare("DELETE FROM activity_details WHERE Id=?");
         $stmt->bind_param("i", $Id);
 
@@ -128,8 +129,6 @@ class ActivityDetailsCRUD {
             return "Error deleting record: " . $stmt->error;
         }
     }
-
-    
 
     public function __destruct() {
         $this->conn->close();
